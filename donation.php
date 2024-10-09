@@ -6,6 +6,13 @@
  * @version 1.0
  */
 
+
+ //
+ini_set('session.cookie_httponly', 1); // Prevent JavaScript access to session cookies
+ini_set('session.cookie_secure', 1);   // Ensure cookies are sent over HTTPS only
+ini_set('session.use_strict_mode', 1); // Strict session mode
+
+
 // Start the session to store messages and old input
 session_start();
 
@@ -51,6 +58,17 @@ function initializeDatabase()
             )
         ";
         $pdo->exec($createTableQuery);
+
+        // Create users table
+        $createUsersTable = "
+        CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT NOT NULL UNIQUE,
+            password TEXT NOT NULL,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        )
+        ";
+        $pdo->exec($createUsersTable);
     }
 
     return $pdo;
