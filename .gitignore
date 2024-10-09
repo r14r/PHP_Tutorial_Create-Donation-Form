@@ -7,6 +7,9 @@
 .vscode
 .vscode-insiders
 
+.config
+.gitconfig
+
 Library
 
 set_env.sh
