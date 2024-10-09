@@ -1,0 +1,11 @@
+{
+    "name": "r14r/php_tutorial_create-donation-form",
+    "description": "php_tutorial_create-donation-form",
+    "type": "project",
+    "authors": [
+        {
+            "name": "Ralph Göstenmeier"
+        }
+    ],
+    "require": {}
+}

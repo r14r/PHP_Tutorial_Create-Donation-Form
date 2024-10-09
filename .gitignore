@@ -1,0 +1,16 @@
+.cache
+.envrc
+
+.local
+.venv
+.viminfo
+.vscode
+.vscode-insiders
+
+Library
+
+set_env.sh
+
+database
+
+/vendor/
