@@ -267,9 +267,15 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
 <head>
     <meta charset="UTF-8">
     <title>Donation Form</title>
-
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Bootstrap CSS (optional for styling) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
+        /* Custom styles for the form */
+        .container {
+            max-width: 600px;
+            margin-top: 50px;
+        }
+
         .error {
             color: #dc3545;
             font-size: 0.875em;
@@ -292,7 +298,7 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
             var data = {};
 
             try {
-                const response = await fetch('lib/php/get_exchange_rate.php?currency=' + currency);
+                const response = await fetch('get_exchange_rate.php?currency=' + currency);
                 data = await response.json();
                 console.log('get exchange rate: ', data);
             } catch (error) {
@@ -300,11 +306,11 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
 
             }
 
+
             if (data.success) {
                 const rate = data.rate;
                 const converted = amount * rate;
 
-                console.log(`get exchange rate: rate=${rate} amount=${amount} ==> ${converted}`);
                 document.getElementById('convertedAmount').innerHTML =
                     `Converted Amount in USD: ${converted.toFixed(2)} USD`;
             } else {
@@ -316,6 +322,8 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
 
 <body>
     <div class="container">
+        <h2 class="mb-4">Donation Form</h2>
+
         <!-- Display Success Message -->
         <?php if (!empty($successMessage)): ?>
             <div class="alert alert-success">
@@ -333,96 +341,6 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
                 </ul>
             </div>
         <?php endif; ?>
-
-
-        <section class="bg-white dark:bg-gray-900">
-            <div class="py-8 px-4 mx-auto max-w-2xl lg:py-16">
-                <h2 class="mb-4 text-xl font-bold text-gray-900 dark:text-white">Donate</h2>
-                <form action="<?= htmlspecialchars($_SERVER['PHP_SELF']) ?>" method="POST" novalidate>
-                    <div class="grid gap-4 sm:grid-cols-2 sm:gap-6">
-                        <!-- NAME -->
-                        <div class="sm:col-span-2">
-                            <label for="name"
-                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Name</label>
-                            <input type="text" name="name" id="name"
-                                class="<?= isset($errors['name']) ? 'is-invalid' : '' ?> bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                                placeholder="First and Last Name" value="<?= $old['name'] ?? '' ?>" required
-                                maxlength="255">
-                            <?php if (isset($errors['name'])): ?>
-                                <div class="invalid-feedback">
-                                    <?= htmlspecialchars($errors['name']) ?>
-                                </div>
-                            <?php endif; ?>
-                        </div>
-
-                        <!-- BANK INFORMATION -->
-                        <div class="sm:col-span-2">
-                            <label for="bankinformation"
-                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Name</label>
-                            <input type="text" name="bankinformation" id="bankinformation"
-                                class="<?= isset($errors['bankinformation']) ? 'is-invalid' : '' ?> bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                                placeholder="Bank Information" value="<?= $old['bankinformation'] ?? '' ?>" required
-                                maxlength="255">
-                            <?php if (isset($errors['nabankinformationme'])): ?>
-                                <div class="invalid-feedback">
-                                    <?= htmlspecialchars($errors['bankinformation']) ?>
-                                </div>
-                            <?php endif; ?>
-                        </div>
-
-
-                        <!-- BRAND
-                        <div class="w-full">
-                            <label for="brand" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Brand</label>
-                            <input type="text" name="brand" id="brand"
-                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                                placeholder="Product brand" required>
-                        </div>
-                        -->
-
-                        <!-- AMOUNT  -->
-                        <div class="w-full">
-                            <label for="amount" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Amount</label>
-
-                            <input type="number" id="amount" name="amount" step="0.01" min="0.01" placeholder="$100" required value="<?= $old['amount'] ?? '' ?>" required oninput="convertCurrency()" class="<?= isset($errors['amount']) ? 'is-invalid' : '' ?> bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
-
-                        </div>
-
-                        <!-- AMOUNT CURRENTY -->
-                        <div>
-                            <label for="amount_currency" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Donation Currency</label>
-                            
-                            <select id="amount_currency" name="amount_currency" onchange="convertCurrency()" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
-                                <option selected="">Select Currency</option>
-                                <option value="USD">USD - United States Dollar</option>
-                                <option value="EUR">EUR - Euro</option>
-                                <option value="GBP">GBP - British Pound</option>
-
-                            </select>
-                        </div>
-
-                        <!-- DESCRIPTION -->
-                        <div class="sm:col-span-2">
-                            <label for="description"
-                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Description</label>
-                            <textarea id="description" rows="8"
-                                class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                                placeholder="Your description here"></textarea>
-                        </div>
-                    </div>
-
-                    <!-- ADD -->
-                    <button type="submit"
-                        class="inline-flex items-center px-5 py-2.5 mt-4 sm:mt-6 text-sm font-medium text-center text-white bg-primary-700 rounded-lg focus:ring-4 focus:ring-primary-200 dark:focus:ring-primary-900 hover:bg-primary-800">
-                        Add product
-                    </button>
-                </form>
-            </div>
-        </section>
-
-
-
-
 
         <!-- Donation Form -->
         <form action="<?= htmlspecialchars($_SERVER['PHP_SELF']) ?>" method="POST" novalidate>
@@ -453,7 +371,9 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
             <!-- Amount Field -->
             <div class="mb-3">
                 <label for="amount" class="form-label">Amount<span class="text-danger">*</span></label>
-                <input type="number" step="0.01" min="0.01" class="form-control <?= isset($errors['amount']) ? 'is-invalid' : '' ?>" id="amount" name="amount" value="<?= $old['amount'] ?? '' ?>" required oninput="convertCurrency()">
+                <input type="number" step="0.01" min="0.01"
+                    class="form-control <?= isset($errors['amount']) ? 'is-invalid' : '' ?>" id="amount" name="amount"
+                    value="<?= $old['amount'] ?? '' ?>" required oninput="convertCurrency()">
                 <?php if (isset($errors['amount'])): ?>
                     <div class="invalid-feedback">
                         <?= htmlspecialchars($errors['amount']) ?>
@@ -473,41 +393,46 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
             </div>
 
             <!-- Converted Amount Display -->
-            <div id="convertedAmount"></div><br>
+            <div     id="convertedAmount"></div><br>
 
 
 
             <div class="form-row">
-                <!-- Amount Field -->
-                <div class="form-group">
-                    <label for="amount" class="form-label">Amount<span class="text-danger">*</span></label>
-                    <input type="number" step="0.01" min="0.01"
-                        class="form-control <?= isset($errors['amount']) ? 'is-invalid' : '' ?>" id="amount"
-                        name="amount" value="<?= $old['amount'] ?? '' ?>" required oninput="convertCurrency()">
-                    <?php if (isset($errors['amount'])): ?>
-                        <div class="invalid-feedback">
-                            <?= htmlspecialchars($errors['amount']) ?>
-                        </div>
-                    <?php endif; ?>
-                </div>
-
-                <!-- Currency Field -->
-                <div class="form-group">
-                    <label for="currency" class="form-label">Currency<span class="text-danger">*</span></label>
-                    <select class="form-control <?= isset($errors['currency']) ? 'is-invalid' : '' ?>" id="currency"
-                        name="currency" onchange="convertCurrency()">
-                        <option value="USD">USD - United States Dollar</option>
-                        <option value="EUR">EUR - Euro</option>
-                        <option value="GBP">GBP - British Pound</option>
-                        <!-- Add more currencies as needed -->
-                    </select>
-                    <?php if (isset($errors['currency'])): ?>
-                        <div class="invalid-feedback">
-                            <?= htmlspecialchars($errors['currency']) ?>
-                        </div>
-                    <?php endif; ?>
-                </div>
+    <!-- Amount Field -->
+    <div class="form-group">
+        <label for="amount" class="form-label">Amount<span class="text-danger">*</span></label>
+        <input type="number" step="0.01" min="0.01"
+               class="form-control <?= isset($errors['amount']) ? 'is-invalid' : '' ?>" id="amount"
+               name="amount" value="<?= $old['amount'] ?? '' ?>" required oninput="convertCurrency()">
+        <?php if (isset($errors['amount'])): ?>
+            <div class="invalid-feedback">
+                <?= htmlspecialchars($errors['amount']) ?>
             </div>
+        <?php endif; ?>
+    </div>
+
+    <!-- Currency Field -->
+    <div class="form-group">
+        <label for="currency" class="form-label">Currency<span class="text-danger">*</span></label>
+        <select class="form-control <?= isset($errors['currency']) ? 'is-invalid' : '' ?>" id="currency"
+                name="currency" onchange="convertCurrency()">
+            <option value="USD">USD - United States Dollar</option>
+            <option value="EUR">EUR - Euro</option>
+            <option value="GBP">GBP - British Pound</option>
+            <!-- Add more currencies as needed -->
+        </select>
+        <?php if (isset($errors['currency'])): ?>
+            <div class="invalid-feedback">
+                <?= htmlspecialchars($errors['currency']) ?>
+            </div>
+        <?php endif; ?>
+    </div>
+</div>
+
+
+
+
+
 
             <!-- Description Field -->
             <div class="mb-3">
@@ -525,6 +450,31 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
             <button type="submit" class="btn btn-primary">Donate</button>
         </form>
     </div>
+
+    <!-- Bootstrap JS (optional for interactivity) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // JavaScript for Bootstrap form validation
+        (function () {
+            'use strict'
+
+            // Fetch all the forms we want to apply custom Bootstrap validation styles to
+            var forms = document.querySelectorAll('form')
+
+            // Loop over them and prevent submission if invalid
+            Array.prototype.slice.call(forms)
+                .forEach(function (form) {
+                    form.addEventListener('submit', function (event) {
+                        if (!form.checkValidity()) {
+                            event.preventDefault()
+                            event.stopPropagation()
+                        }
+
+                        form.classList.add('was-validated')
+                    }, false)
+                })
+        })()
+    </script>
 </body>
 
 </html>
