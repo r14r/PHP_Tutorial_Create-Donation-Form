@@ -278,8 +278,10 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
 
     <script>
         async function convertCurrency() {
-            const amount = document.getElementById('amount').value;
-            const currency = document.getElementById('currency').value;
+            const amount = document.getElementById('amount_value').value;
+            const currency = document.getElementById('amount_currency').value;
+
+            const amount_converted = document.getElementById('amount_converted');
 
             if (!amount || amount <= 0) {
                 document.getElementById('convertedAmount').innerHTML = "Please enter a valid amount.";
@@ -294,7 +296,7 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
             try {
                 const response = await fetch('lib/php/get_exchange_rate.php?currency=' + currency);
                 data = await response.json();
-                console.log('get exchange rate: ', data);
+                console.log(`get exchange rate: amount=${amount}: ${data}`);
             } catch (error) {
                 console.log('get exchange rate: ERROR ', error);
 
@@ -305,10 +307,11 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
                 const converted = amount * rate;
 
                 console.log(`get exchange rate: rate=${rate} amount=${amount} ==> ${converted}`);
-                document.getElementById('convertedAmount').innerHTML =
+                amount_converted.innerHTML =
                     `Converted Amount in USD: ${converted.toFixed(2)} USD`;
             } else {
-                document.getElementById('convertedAmount').innerHTML = "Failed to fetch exchange rate.";
+                console.log('get exchange rate: ERROR: failed to fetch amont_converted element');
+                amount_converted.innerHTML = "Failed to fetch exchange rate.";
             }
         }
     </script>
@@ -333,6 +336,86 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
                 </ul>
             </div>
         <?php endif; ?>
+
+
+
+        <section id="login" class="p-4 flex flex-col justify-center min-h-screen max-w-md mx-auto">
+            <div class="p-6 bg-sky-100 rounded">
+                <div class="flex items-center justify-center font-black m-3 mb-12">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 mr-3 text-red-600 animate-pulse"
+                        viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd"
+                            d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"
+                            clip-rule="evenodd" />
+                    </svg>
+                    <h1 class="tracking-wide text-3xl text-gray-900">Buy Me a Laptop</h1>
+                </div>
+                <form id="login_form" action="api_login" method="POST" class="flex flex-col justify-center">
+                    <div class="flex justify-between items-center mb-3">
+                        <div class="inline-flex items-center self-start">
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                class="h-8 w-8 mr-3 bg-gradient-to-r from-pink-600 to-red-600 shadow-lg rounded p-1.5 text-gray-100"
+                                viewBox="0 0 20 20" fill="currentColor">
+                                <path d="M13 7H7v6h6V7z" />
+                                <path fill-rule="evenodd"
+                                    d="M7 2a1 1 0 012 0v1h2V2a1 1 0 112 0v1h2a2 2 0 012 2v2h1a1 1 0 110 2h-1v2h1a1 1 0 110 2h-1v2a2 2 0 01-2 2h-2v1a1 1 0 11-2 0v-1H9v1a1 1 0 11-2 0v-1H5a2 2 0 01-2-2v-2H2a1 1 0 110-2h1V9H2a1 1 0 010-2h1V5a2 2 0 012-2h2V2zM5 5h10v10H5V5z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                            <span class="font-bold text-gray-900">$5 / Core</span>
+                        </div>
+                        <div class="flex">
+                            <button type="button" onclick="minus()" class="bg-yellow-600 p-1.5 font-bold rounded">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
+                                    fill="currentColor">
+                                    <path fill-rule="evenodd" d="M5 10a1 1 0 011-1h8a1 1 0 110 2H6a1 1 0 01-1-1z"
+                                        clip-rule="evenodd" />
+                                </svg>
+                            </button>
+
+                            <input id="item_count" type="number" value="1" class="max-w-[100px] font-bold font-mono py-1.5 px-2 mx-1.5
+            block border border-gray-300 rounded-md text-sm shadow-sm  placeholder-gray-400
+            focus:outline-none
+            focus:border-sky-500
+            focus:ring-1
+            focus:ring-sky-500
+            focus:invalid:border-red-500  focus:invalid:ring-red-500">
+
+                            <button type="button" onclick="plus()" class="bg-green-600 p-1.5 font-bold rounded">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
+                                    fill="currentColor">
+                                    <path fill-rule="evenodd"
+                                        d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
+                                        clip-rule="evenodd" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    <label class="text-sm font-medium">From</label>
+                    <input class="mb-3 px-2 py-1.5
+          mb-3 mt-1 block w-full px-2 py-1.5 border border-gray-300 rounded-md text-sm shadow-sm placeholder-gray-400
+          focus:outline-none
+          focus:border-sky-500
+          focus:ring-1
+          focus:ring-sky-500
+          focus:invalid:border-red-500 focus:invalid:ring-red-500" type="text" name="username" placeholder="wahyusa">
+                    <label class="text-sm font-medium">Messages (optional)</label>
+                    <textarea class="
+          mb-3 mt-1 block w-full px-2 py-1.5 border border-gray-300 rounded-md text-sm shadow-sm placeholder-gray-400
+          focus:outline-none
+          focus:border-sky-500
+          focus:ring-1
+          focus:ring-sky-500
+          focus:invalid:border-red-500 focus:invalid:ring-red-500" name="messages"
+                        placeholder="Write something"></textarea>
+                    <button
+                        class="px-4 py-1.5 rounded-md shadow-lg bg-gradient-to-r from-pink-600 to-red-600 font-medium text-gray-100 block transition duration-300"
+                        type="submit">
+                        <span id="login_process_state" class="hidden">Sending :)</span>
+                        <span id="login_default_state">Donate<span id="subtotal"></span></span>
+                    </button>
+                </form>
+            </div>
+        </section>
 
 
         <section class="bg-white dark:bg-gray-900">
@@ -382,23 +465,39 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
 
                         <!-- AMOUNT  -->
                         <div class="w-full">
-                            <label for="amount" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Amount</label>
+                            <label for="amount_value"
+                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Amount</label>
 
-                            <input type="number" id="amount" name="amount" step="0.01" min="0.01" placeholder="$100" required value="<?= $old['amount'] ?? '' ?>" required oninput="convertCurrency()" class="<?= isset($errors['amount']) ? 'is-invalid' : '' ?> bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
+                            <input type="number" id="amount_value" name="amount_value" step="0.01" min="0.01"
+                                placeholder="$100" required value="<?= $old['amount_value'] ?? '' ?>" required
+                                oninput="convertCurrency()"
+                                class="<?= isset($errors['amount_value']) ? 'is-invalid' : '' ?> bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
 
                         </div>
 
                         <!-- AMOUNT CURRENTY -->
                         <div>
-                            <label for="amount_currency" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Donation Currency</label>
-                            
-                            <select id="amount_currency" name="amount_currency" onchange="convertCurrency()" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
+                            <label for="amount_currency"
+                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Donation
+                                Currency</label>
+
+                            <select id="amount_currency" name="amount_currency" onchange="convertCurrency()"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
                                 <option selected="">Select Currency</option>
                                 <option value="USD">USD - United States Dollar</option>
                                 <option value="EUR">EUR - Euro</option>
                                 <option value="GBP">GBP - British Pound</option>
 
                             </select>
+                        </div>
+
+
+                        <!-- Converted Amount Display -->
+                        <div class="sm:col-span-2">
+                            <label for="amount_converted"
+                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Donation
+                                Currency</label>
+                            <div id="amount_converted"></div>
                         </div>
 
                         <!-- DESCRIPTION -->
@@ -409,122 +508,56 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
                                 class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                                 placeholder="Your description here"></textarea>
                         </div>
-                    </div>
 
-                    <!-- ADD -->
-                    <button type="submit"
-                        class="inline-flex items-center px-5 py-2.5 mt-4 sm:mt-6 text-sm font-medium text-center text-white bg-primary-700 rounded-lg focus:ring-4 focus:ring-primary-200 dark:focus:ring-primary-900 hover:bg-primary-800">
-                        Add product
-                    </button>
+
+                        <!-- ADD -->
+                        <div class="sm:col-span-2">
+                            <button type="submit"
+                                class="inline-flex items-center px-5 py-2.5 mt-4 sm:mt-6 text-sm font-medium text-center text-white bg-primary-700 rounded-lg focus:ring-4 focus:ring-primary-200 dark:focus:ring-primary-900 hover:bg-primary-800">
+                                Donate
+                            </button>
+                        </div>
+                    </div>
                 </form>
             </div>
         </section>
 
-
-
-
-
-        <!-- Donation Form -->
-        <form action="<?= htmlspecialchars($_SERVER['PHP_SELF']) ?>" method="POST" novalidate>
-            <!-- Name Field -->
-            <div class="mb-3">
-                <label for="name" class="form-label">Name <span class="text-danger">*</span></label>
-                <input type="text" class="form-control <?= isset($errors['name']) ? 'is-invalid' : '' ?>" id="name"
-                    name="name" value="<?= $old['name'] ?? '' ?>" required maxlength="255">
-                <?php if (isset($errors['name'])): ?>
-                    <div class="invalid-feedback">
-                        <?= htmlspecialchars($errors['name']) ?>
-                    </div>
-                <?php endif; ?>
-            </div>
-
-            <!-- Bank Information Field -->
-            <div class="mb-3">
-                <label for="bank_info" class="form-label">Bank Information <span class="text-danger">*</span></label>
-                <input type="text" class="form-control <?= isset($errors['bank_info']) ? 'is-invalid' : '' ?>"
-                    id="bank_info" name="bank_info" value="<?= $old['bank_info'] ?? '' ?>" required maxlength="255">
-                <?php if (isset($errors['bank_info'])): ?>
-                    <div class="invalid-feedback">
-                        <?= htmlspecialchars($errors['bank_info']) ?>
-                    </div>
-                <?php endif; ?>
-            </div>
-
-            <!-- Amount Field -->
-            <div class="mb-3">
-                <label for="amount" class="form-label">Amount<span class="text-danger">*</span></label>
-                <input type="number" step="0.01" min="0.01" class="form-control <?= isset($errors['amount']) ? 'is-invalid' : '' ?>" id="amount" name="amount" value="<?= $old['amount'] ?? '' ?>" required oninput="convertCurrency()">
-                <?php if (isset($errors['amount'])): ?>
-                    <div class="invalid-feedback">
-                        <?= htmlspecialchars($errors['amount']) ?>
-                    </div>
-                <?php endif; ?>
-            </div>
-
-            <!-- Currency Field -->
-            <div class="mb-3">
-                <label for="currency" class="form-label">Currency<span class="text-danger">*</span></label>
-                <select id="currency" name="currency" onchange="convertCurrency()">
-                    <option value="USD">USD - United States Dollar</option>
-                    <option value="EUR">EUR - Euro</option>
-                    <option value="GBP">GBP - British Pound</option>
-                    <!-- Add more currencies as needed -->
-                </select>
-            </div>
-
-            <!-- Converted Amount Display -->
-            <div id="convertedAmount"></div><br>
-
-
-
-            <div class="form-row">
-                <!-- Amount Field -->
-                <div class="form-group">
-                    <label for="amount" class="form-label">Amount<span class="text-danger">*</span></label>
-                    <input type="number" step="0.01" min="0.01"
-                        class="form-control <?= isset($errors['amount']) ? 'is-invalid' : '' ?>" id="amount"
-                        name="amount" value="<?= $old['amount'] ?? '' ?>" required oninput="convertCurrency()">
-                    <?php if (isset($errors['amount'])): ?>
-                        <div class="invalid-feedback">
-                            <?= htmlspecialchars($errors['amount']) ?>
-                        </div>
-                    <?php endif; ?>
-                </div>
-
-                <!-- Currency Field -->
-                <div class="form-group">
-                    <label for="currency" class="form-label">Currency<span class="text-danger">*</span></label>
-                    <select class="form-control <?= isset($errors['currency']) ? 'is-invalid' : '' ?>" id="currency"
-                        name="currency" onchange="convertCurrency()">
-                        <option value="USD">USD - United States Dollar</option>
-                        <option value="EUR">EUR - Euro</option>
-                        <option value="GBP">GBP - British Pound</option>
-                        <!-- Add more currencies as needed -->
-                    </select>
-                    <?php if (isset($errors['currency'])): ?>
-                        <div class="invalid-feedback">
-                            <?= htmlspecialchars($errors['currency']) ?>
-                        </div>
-                    <?php endif; ?>
-                </div>
-            </div>
-
-            <!-- Description Field -->
-            <div class="mb-3">
-                <label for="description" class="form-label">Description (Optional)</label>
-                <textarea class="form-control <?= isset($errors['description']) ? 'is-invalid' : '' ?>" id="description"
-                    name="description" rows="3" maxlength="1000"><?= $old['description'] ?? '' ?></textarea>
-                <?php if (isset($errors['description'])): ?>
-                    <div class="invalid-feedback">
-                        <?= htmlspecialchars($errors['description']) ?>
-                    </div>
-                <?php endif; ?>
-            </div>
-
-            <!-- Submit Button -->
-            <button type="submit" class="btn btn-primary">Donate</button>
-        </form>
     </div>
+
+
+
+
+    <script>
+        document.getElementById("login_form").onsubmit = function () {
+            event.preventDefault()
+            // animation
+            document.getElementById("login_process_state").classList.remove("hidden")
+            document.getElementById("login_process_state").classList.add("animate-pulse")
+
+            document.getElementById("login_default_state").classList.add("hidden")
+        }
+
+        let current_count = parseInt(document.getElementById("item_count").value)
+        let subtotal = parseInt(5)
+
+        function plus() {
+            document.getElementById("item_count").value = ++current_count
+            document.getElementById("subtotal").innerHTML = ` $${subtotal * document.getElementById("item_count").value}`
+
+        }
+
+        function minus() {
+            if (current_count < 2) {
+                current_count = 1
+                document.getElementById("item_count").value = 1
+                document.getElementById("subtotal").innerHTML = ` $${subtotal * document.getElementById("item_count").value}`
+            } else {
+                document.getElementById("item_count").value = --current_count
+                document.getElementById("subtotal").innerHTML = ` $${subtotal * document.getElementById("item_count").value}`
+            }
+        }
+
+    </script>
 </body>
 
 </html>

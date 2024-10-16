@@ -27,4 +27,3 @@ if (isset($_GET['currency'])) {
 } else {
     echo json_encode(['success' => false, 'message' => 'Currency not provided']);
 }
-?>
